@@ -1,0 +1,80 @@
+load_mmseqs_dir <- function(dir.path,
+                            frag_thr=3,
+                            sup_thr=0.7){
+    # **Error checking**
+  # Check if directory exists
+  if (!dir.exists(dir.path)) {
+    stop("Directory does not exist")
+  }
+  
+  # Check if files are .tsv files with the ending "_lca.tsv"
+  files <- list.files(dir.path, recursive = F)
+  if (!all(grepl("_lca.tsv$", files))) {
+    stop("Files must be .tsv files with the ending '_lca.tsv'")
+  }
+  
+  # Check if sup_thr is between 0 and 1
+  if (sup_thr < 0 || sup_thr > 1) {
+    stop("sup_thr must be between 0 and 1")
+  }
+  
+  # Check if frag_thr is an integer greater than 0
+  if (!is.integer(frag_thr) || frag_thr <= 0) {
+    stop("frag_thr must be an integer greater than 0")
+  }
+    # **Error checking done**
+  
+  #Set main variables
+  tax_ranks <- c("kingdom","phylum","class","order","family","genus","species")
+  
+  col.names <- c(rank="X3",
+                 name="X4",
+                 total_fragments="X5",
+                 support="X8",
+                 taxonomy="X9")
+  
+  # Read all files in the directory
+  files <- list.files(dir.path, recursive = F)
+  files
+  # Vectorize the loop
+  file_dfs <- lapply(files, function(file) {
+    sample_name <- str_split(file, "_", simplify = T)[1]
+    
+    df <- read_delim(paste0(dir.path, "/", file),
+               col_names = F,
+               delim = "\t",
+               show_col_types = F) %>% 
+      rename(all_of(col.names)) %>%
+      mutate(rank = gsub("superkingdom", "kingdom", rank),
+             Sample = sample_name)
+    return(df)
+  })
+
+  # Filter and join the data frames
+  res.df <- Reduce(
+    rbind,
+    lapply(file_dfs, function(file.df) {
+      file.df %>%
+        filter(total_fragments >= frag_thr & support >= sup_thr & !rank %in% c("no rank", "clade")) %>%
+        group_by(taxonomy) %>%
+        summarise(counts = n()) %>%
+        dplyr::inner_join(file.df %>% filter(rank %in% tax_ranks) %>% 
+                            select(name, rank, taxonomy,Sample) %>% 
+                            unique(), by = "taxonomy") %>%
+        mutate(rank = factor(rank, levels = tax_ranks)) %>%
+        arrange(rank)
+    })
+  )
+
+  # Pivot the final data frame
+  suppressWarnings(
+    res.df <- res.df %>%
+      mutate(ordr = as.numeric(gsub("Sample", "", Sample))) %>%
+      arrange(ordr) %>%
+      select(-ordr) %>%
+      pivot_wider(names_from = Sample,
+                   values_from = counts) %>%
+      replace(is.na(.), 0)
+  )
+  return(res.df)
+}
