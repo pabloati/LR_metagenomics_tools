@@ -4,7 +4,7 @@ A repository with different scripts and function to aid into the conversion of d
 load_mmseqs_dir(dir.path,frag_thr,sup_thr)
 ------------------
 
-The load_mmseqs_dir() function reads Last Common Ancestor (LCA) output files from MMseqs2 and loads them into a data frame. The LCA output files must have been generated with the --tax-lineage 1 option.
+The [load_mmseqs_dir()](https://github.com/pabloati/LR_metagenomics_tools/blob/main/load_mmseqs_dir) function reads Last Common Ancestor (LCA) output files from MMseqs2 and loads them into a data frame. The LCA output files must have been generated with the --tax-lineage 1 option.
 
 **Usage**
 
