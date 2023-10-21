@@ -1,7 +1,7 @@
 # LR_metagenomics_tools
 A repository with different scripts and function to aid into the conversion of different outputs from long reads taxnomic profilers into standard R objects
 
-load_mmseqs_dir()
+load_mmseqs_dir(dir.path,frag_thr,sup_thr)
 ------------------
 
 The load_mmseqs_dir() function reads Last Common Ancestor (LCA) output files from MMseqs2 and loads them into a data frame. The LCA output files must have been generated with the --tax-lineage 1 option.
@@ -10,13 +10,13 @@ The load_mmseqs_dir() function reads Last Common Ancestor (LCA) output files fro
 
 ```markdown
 load_mmseqs_dir(dir.path, frag_thr=3, sup_thr=0.7)
-
+```
 
 **Arguments**
 
 * `dir.path`: Path to the directory where the LCA output files are stored.
-* `frag_thr`: Threshold for the number of proteins detected in a query read. Reads with fewer than frag_thr proteins detected will be filtered out.
-* `sup_thr`: Threshold for the percentage of consensus proteins that have to be in a read to be assigned the taxonomy. Reads with fewer than sup_thr consensus proteins will be filtered out.
+* `frag_thr`: Threshold for the number of proteins detected in a query read. Reads with fewer than frag_thr proteins detected will be filtered out. [3]
+* `sup_thr`: Threshold for the percentage of consensus proteins that have to be in a read to be assigned the taxonomy. Reads with fewer than sup_thr consensus proteins will be filtered out. [0.7]
 
 **Errors**
 
@@ -27,9 +27,9 @@ load_mmseqs_dir(dir.path, frag_thr=3, sup_thr=0.7)
 
 **Example**
 
-markdown
+```markdown
 res.df <- load_mmseqs_dir("lca_files", frag_thr=5, sup_thr=0.9)
-
+```
 
 This would load all of the LCA output files in the `lca_files` directory into a data frame. The data frame would only include reads with 5 or more proteins detected and reads with 90% or more consensus proteins.
 
