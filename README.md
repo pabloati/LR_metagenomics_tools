@@ -8,9 +8,9 @@ The load_mmseqs_dir() function reads Last Common Ancestor (LCA) output files fro
 
 **Usage**
 
-```markdown
+```
 load_mmseqs_dir(dir.path, frag_thr=3, sup_thr=0.7)
-```markdown
+```
 
 **Arguments**
 
@@ -27,7 +27,7 @@ load_mmseqs_dir(dir.path, frag_thr=3, sup_thr=0.7)
 
 **Example**
 
-```markdown
+```
 res.df <- load_mmseqs_dir("lca_files", frag_thr=5, sup_thr=0.9)
 ```
 
