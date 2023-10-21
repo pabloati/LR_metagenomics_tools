@@ -10,7 +10,7 @@ The load_mmseqs_dir() function reads Last Common Ancestor (LCA) output files fro
 
 ```markdown
 load_mmseqs_dir(dir.path, frag_thr=3, sup_thr=0.7)
-```
+```markdown
 
 **Arguments**
 
